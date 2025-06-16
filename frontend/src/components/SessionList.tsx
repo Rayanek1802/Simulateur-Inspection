@@ -24,10 +24,11 @@ interface Session {
 const SessionList: React.FC = () => {
   const [sessions, setSessions] = useState<Session[]>([]);
   const toast = useToast();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const fetchSessions = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:8000/sessions/');
+      const response = await axios.get(`${API_URL}/sessions/`);
       setSessions(response.data);
     } catch (error) {
       toast({

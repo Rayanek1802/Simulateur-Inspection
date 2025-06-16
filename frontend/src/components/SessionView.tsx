@@ -102,9 +102,11 @@ const SessionView: React.FC = () => {
   const { isOpen: isSafetyOpen, onOpen: onSafetyOpen, onClose: onSafetyClose } = useDisclosure();
   const { isOpen: isExerciseOpen, onOpen: onExerciseOpen, onClose: onExerciseClose } = useDisclosure();
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const fetchSession = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/sessions/${id}`);
+      const response = await axios.get(`${API_URL}/sessions/${id}`);
       const sessionData: Session = response.data;
       setSession(sessionData);
       if (sessionData.students.length > 0) {
@@ -124,7 +126,7 @@ const SessionView: React.FC = () => {
         isClosable: true,
       });
     }
-  }, [id, toast]);
+  }, [id, toast, API_URL]);
 
   useEffect(() => {
     fetchSession();
@@ -163,7 +165,7 @@ const SessionView: React.FC = () => {
     }
 
     try {
-      await axios.post(`http://localhost:8000/sessions/${id}/exercises/`, {
+      await axios.post(`${API_URL}/sessions/${id}/exercises/`, {
         name: exerciseName,
         student_name: selectedStudentForExercise,
         competences: selectedCompetencesForExercise,
@@ -195,7 +197,7 @@ const SessionView: React.FC = () => {
 
   const toggleObservation = async (exerciseId: number, observationId: number, isChecked: boolean) => {
     try {
-      await axios.put(`http://localhost:8000/exercises/${exerciseId}/observations/${observationId}`, {
+      await axios.put(`${API_URL}/exercises/${exerciseId}/observations/${observationId}`, {
         is_checked: isChecked
       });
       fetchSession();
@@ -212,7 +214,7 @@ const SessionView: React.FC = () => {
 
   const completeExercise = async (exerciseId: number) => {
     try {
-      await axios.put(`http://localhost:8000/exercises/${exerciseId}/complete`);
+      await axios.put(`${API_URL}/exercises/${exerciseId}/complete`);
       fetchSession();
       toast({
         title: 'Success',
@@ -235,7 +237,7 @@ const SessionView: React.FC = () => {
   const handleGenerateReport = async () => {
     try {
       const safetyScoresJson = JSON.stringify(safetyScores);
-      const response = await axios.get(`http://localhost:8000/sessions/${id}/report/`, {
+      const response = await axios.get(`${API_URL}/sessions/${id}/report/`, {
         params: {
           safety_scores: safetyScoresJson
         }
